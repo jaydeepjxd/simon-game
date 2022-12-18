@@ -1,23 +1,52 @@
+var gameseq = [];  
+var userseq = [];
+var buttons = ["green", "red", "yellow", "blue"];
+var level = 0;
+var started = false;
+
 $("body").keypress(function () { 
-        startgame();
-    });
+       if(!started) {
+        $("#level-title").text("Level " + level);
+        nextseq();
+        started = true;
+    } 
+});
+
+$(".btn").click(function() {
+    var input = $(this).attr("id");
+    userseq.push(input);
+    animate(input);
+    check(userseq.length - 1);
+});
+
+function check(currentnode) {
+
+    if(userseq[currentnode] === gameseq[currentnode]) {
+        if(userseq.length === gameseq.length) {
+            setTimeout(function () {
+                nextseq();
+              }, 1000);
+        }
+    }
+    else {
+        gameover()
+    }
+
+}
+
+function nextseq() {
+    userseq = [];
+    level++;
+    $("#level-title").text("level " + level);
+
+    var rand1 = random(); //give green, blue,...
+    gameseq.push(rand1);
+    animate(rand1);
+}
 
 function random () {
-    var rand = Math.floor( (Math.random() * 4) + 1);
-    switch (rand) {
-        case 1:
-            return "green";
-        break;
-        case 2:
-            return "red";
-        break;
-        case 3:
-            return "yellow";
-        break;
-        case 4:
-            return "blue";
-        break;
-    }
+    var rand = Math.floor( (Math.random() * 4));
+    return(buttons[rand]);
 }
 
 function animate (btn) {
@@ -32,6 +61,7 @@ function animate (btn) {
 }
 
 function gameover () {
+    
     var sound = new Audio("sounds/wrong.mp3");
     sound.play();
 
@@ -43,40 +73,13 @@ function gameover () {
 
     $("#level-title").html("Game Over, Press Any Key To Restart.");
 
-    $("body").keypress(function () { 
-        startgame();
-    });
+    started = false;
+    level = 0;
+    gameseq = [];
+    userseq = [];
 }
 
-function startgame () {
-    
-    let sequence = [];
-    
-    for(var level = 1; level < 100 ; level++) {
 
-        $("#level-title").html("level " + level);
-    
-        var rand1 = random(); //give green, blue,...
-        animate(rand1);
-        sequence[level-1] = rand1;
 
-        for(var i=0; i < sequence.length; i++) {
 
-            $(".btn").click( function() {
-                if (this.attr('id') = sequence[i]) {
-                    alert($(this).attr('id'));
-                    animate($(this).attr('id'));
-                    alert("yes");
-                }
-                else {
-                    gameover();
-                    
-                }
-            }); 
-    
-        } //inner for loop ends
-
-    } //outer for loop ends
-
-}   //startgame function ends
 
